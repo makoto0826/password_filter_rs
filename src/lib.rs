@@ -75,7 +75,7 @@ impl Context {
     fn get_or_init() -> Arc<Mutex<Context>> {
         static CONTEXT: OnceCell<Arc<Mutex<Context>>> = OnceCell::new();
 
-        CONTEXT.get_or_init(|| {
+        let context = CONTEXT.get_or_init(|| {
             let (sender, receiver) = mpsc::channel();
             let handle = run_worker(receiver);
 
@@ -85,7 +85,7 @@ impl Context {
             }))
         });
 
-        CONTEXT.get().unwrap().clone()
+        context.clone()
     }
 
     fn send(&self, command: Command) {
